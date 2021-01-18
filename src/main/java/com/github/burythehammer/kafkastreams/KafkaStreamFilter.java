@@ -8,26 +8,38 @@ import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class KafkaStreamFilter {
+    private static final Logger logger = LoggerFactory.getLogger("KafkaStreamLogger");
+
+    private static final String SOURCE_TOPIC = "twitter_tweets";
+    private static final String DESTINATION_TOPIC = "popular_tweets";
+    private static final String KAFKA_SERVER_URL = "localhost:9092";
+    private static final String APPLICATION_ID = "kafka-streams";
+
+    private static final int POPULAR_USER_THRESHOLD = 10000;
 
     public static void main(String[] args){
+
         Properties properties = new Properties();
-        properties.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
-        properties.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "kafka-streams");
+        properties.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVER_URL);
+        properties.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, APPLICATION_ID);
         properties.setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde.class.getName());
         properties.setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde.class.getName());
 
         StreamsBuilder streamsBuilder = new StreamsBuilder();
 
-        KStream<String, String> inputTopic = streamsBuilder.stream("twitter_tweets");
+        KStream<String, String> inputTopic = streamsBuilder.stream(SOURCE_TOPIC);
 
         final KStream<String, String> filteredStream = inputTopic.filter((k, v) -> {
             int userFollowers = extractUserFollowersInTweet(v);
-            return userFollowers > 1000;
+            return userFollowers > POPULAR_USER_THRESHOLD;
         });
 
-        filteredStream.to("popular_tweets");
+        filteredStream.to(DESTINATION_TOPIC);
 
         final KafkaStreams kafkaStreams = new KafkaStreams(streamsBuilder.build(), properties);
         kafkaStreams.start();
@@ -39,12 +51,11 @@ public class KafkaStreamFilter {
                     .getAsJsonObject()
                     .get("user")
                     .getAsJsonObject()
-                    .get("followers count")
+                    .get("followers_count")
                     .getAsInt();
         } catch (NullPointerException e) {
             return 0;
         }
     }
 }
-
 

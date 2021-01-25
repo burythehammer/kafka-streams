@@ -1,4 +1,4 @@
-package com.github.burythehammer.kafkastreams;
+package com.github.burythehammer.kafkastreams.twitter;
 
 import java.util.Properties;
 
@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class KafkaStreamFilter {
-    private static final Logger logger = LoggerFactory.getLogger("KafkaStreamLogger");
+public class KafkaStreamTwitterFilter {
+    private static final Logger logger = LoggerFactory.getLogger("KafkaStreamTwitterLogger");
 
     private static final String SOURCE_TOPIC = "twitter_tweets";
     private static final String DESTINATION_TOPIC = "popular_tweets";

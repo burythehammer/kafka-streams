@@ -29,14 +29,12 @@ public class FavouriteColourApp {
 
         KStream<String, String> faveColours = builder.stream("favourite-colour-input");
 
-        logger.info("hello");
-
         faveColours.filter((k, v) -> (v.split(",", -1).length) - 1 == 1)
                 .selectKey((k, v) -> v.split(",")[0])
                 .mapValues(String::toLowerCase)
                 .mapValues(String::trim)
                 .mapValues(v -> v.split(",")[1])
-                .peek((k, v) -> logger.info("STREAM key: \"" + k + "\", value: \"" + v + "\""))
+                .peek((k, v) -> logger.info("Person: \"" + k + "\", Colour: \"" + v + "\""))
                 .to(Serdes.String(), Serdes.String(), "favourite-colour-by-person");
 
 

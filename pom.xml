@@ -11,6 +11,7 @@
     <modules>
         <module>twitter</module>
         <module>wordcount</module>
+        <module>favouritecolour</module>
     </modules>
 
     <properties>

@@ -1,4 +1,4 @@
-package com.github.burythehammer.kafkastreams.wordcount;
+package com.github.burythehammer.kafka.streams.wordcount;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
@@ -33,7 +33,7 @@ public class StreamsStarterApp {
                 .groupByKey()
                 .count(Named.as("Counts"));
 
-        wordCount.toStream(Named.as("word count output"));
+        wordCount.toStream(Named.as("word-count-output"));
 
         final KafkaStreams kafkaStreams = new KafkaStreams(builder.build(), config);
         kafkaStreams.start();

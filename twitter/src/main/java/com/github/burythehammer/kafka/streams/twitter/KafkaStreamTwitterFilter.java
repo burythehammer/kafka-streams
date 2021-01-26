@@ -1,4 +1,4 @@
-package com.github.burythehammer.kafkastreams.twitter;
+package com.github.burythehammer.kafka.streams.twitter;
 
 import java.util.Properties;
 
@@ -42,6 +42,9 @@ public class KafkaStreamTwitterFilter {
         filteredStream.to(DESTINATION_TOPIC);
 
         final KafkaStreams kafkaStreams = new KafkaStreams(streamsBuilder.build(), properties);
+
+        logger.info("hello");
+
         kafkaStreams.start();
     }
 

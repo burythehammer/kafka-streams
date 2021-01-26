@@ -21,7 +21,6 @@ public class WordCountApp {
         config.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
 
         KStreamBuilder builder = new KStreamBuilder();
-        // 1 - stream from Kafka
 
         KStream<String, String> textLines = builder.stream("word-count-input");
         KTable<String, Long> wordCounts = textLines
@@ -31,28 +30,11 @@ public class WordCountApp {
                 .groupByKey()
                 .count("Counts");
 
-        // 7 - to in order to write the results back to kafka
         wordCounts.to(Serdes.String(), Serdes.Long(), "word-count-output");
 
         KafkaStreams streams = new KafkaStreams(builder, config);
         streams.start();
 
-
-
-        // shutdown hook to correctly close the streams application
         Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
-
-        // Update:
-        // print the topology every 10 seconds for learning purposes
-        while(true){
-            System.out.println(streams.toString());
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                break;
-            }
-        }
-
-
     }
 }
